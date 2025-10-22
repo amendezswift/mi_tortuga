@@ -1,0 +1,39 @@
+// assets/js/cart.js
+async function addToCart(producto_id, cantidad=1){
+  const res = await fetch('/mi_tortuga/controllers/cart.php?action=add', {
+    method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({producto_id, cantidad})
+  });
+  const j = await res.json();
+  if(j.ok){ alert('Agregado al carrito'); renderCartTable?.(); } else { alert(j.msg||'Error'); }
+}
+
+async function removeFromCart(producto_id){
+  const res = await fetch('/mi_tortuga/controllers/cart.php?action=remove', {
+    method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({producto_id})
+  });
+  const j = await res.json();
+  if(j.ok){ renderCartTable(); }
+}
+
+async function renderCartTable(){
+  const box = document.getElementById('cart-container');
+  if(!box) return;
+  const res = await fetch('/mi_tortuga/controllers/cart.php?action=list');
+  const j = await res.json();
+  if(!j.ok){ box.innerHTML = '<div class="alert alert-warning">Carrito vacío</div>'; return; }
+  let html = '<table class="table table-striped"><thead><tr><th>Producto</th><th>Cant</th><th>Precio</th><th>Subtotal</th><th></th></tr></thead><tbody>';
+  for(const it of j.items){
+    html += `<tr><td>${it.nombre}</td><td>${it.cantidad}</td><td>Q ${it.precio.toFixed(2)}</td><td>Q ${it.subtotal.toFixed(2)}</td>
+      <td><button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(${it.producto_id})">Quitar</button></td></tr>`;
+  }
+  html += `</tbody></table>
+  <div class="text-end">
+    <div>Subtotal: <strong>Q ${j.subtotal.toFixed(2)}</strong></div>
+    <div>IVA (12%): <strong>Q ${j.iva.toFixed(2)}</strong></div>
+    <div>Envío: <strong>Q ${j.envio.toFixed(2)}</strong></div>
+    <div class="fs-5">Total: <strong>Q ${j.total.toFixed(2)}</strong></div>
+  </div>`;
+  box.innerHTML = html;
+}

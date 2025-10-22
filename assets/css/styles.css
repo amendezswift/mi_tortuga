@@ -1,0 +1,9 @@
+/* assets/css/styles.css */
+:root{
+  --tortuga-green:#198754;
+  --tortuga-beige:#f7efe1;
+}
+body{ background: var(--tortuga-beige); }
+.navbar{ background: var(--tortuga-green) !important; }
+.card-title{ color: var(--tortuga-green); }
+.btn-success{ background: var(--tortuga-green); border-color: var(--tortuga-green); }
