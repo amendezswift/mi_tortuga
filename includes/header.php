@@ -33,7 +33,7 @@
       </ul>
       <ul class="navbar-nav">
         <?php if (!empty($_SESSION['usuario_id'])): ?>
-          <li class="nav-item"><a class="nav-link" href="/mi_tortuga/index.php?page=perfil"><i class="fa fa-user"></i> Perfil</a></li>
+          <li class="nav-item"><a class="nav-link" href="/mi_tortuga/index.php?page=perfil"><i class="fa-solid fa-user"></i> Perfil</a></li>
           <li class="nav-item"><a class="nav-link" href="/mi_tortuga/controllers/auth.php?action=logout">Salir</a></li>
         <?php else: ?>
           <li class="nav-item"><a class="nav-link" href="/mi_tortuga/index.php?page=login">Ingresar</a></li>

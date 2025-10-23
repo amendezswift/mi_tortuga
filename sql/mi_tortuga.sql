@@ -18,6 +18,16 @@ CREATE TABLE IF NOT EXISTS usuarios (
   creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- Tokens para recuperación de contraseña
+CREATE TABLE IF NOT EXISTS password_resets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL UNIQUE,
+  token_hash VARCHAR(255) NOT NULL,
+  expira_en DATETIME NOT NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 -- Tabla de categorías
 CREATE TABLE IF NOT EXISTS categorias (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -47,7 +57,8 @@ CREATE TABLE IF NOT EXISTS resenas (
   comentario TEXT,
   creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE CASCADE,
-  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_review (producto_id, usuario_id)
 ) ENGINE=InnoDB;
 
 -- Carrito (persistencia por usuario o sesión)
@@ -114,9 +125,10 @@ CREATE TABLE IF NOT EXISTS envios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   pedido_id INT NOT NULL,
   tracking VARCHAR(64) NOT NULL,
-  estado ENUM('pendiente','en_transito','entregado') NOT NULL DEFAULT 'pendiente',
+  estado ENUM('pendiente','enviado','entregado') NOT NULL DEFAULT 'pendiente',
   creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_envio (pedido_id)
 ) ENGINE=InnoDB;
 
 -- Mensajes del chat (soporte)
@@ -140,7 +152,5 @@ VALUES
 
 -- Usuario admin por defecto (password: admin123)
 INSERT IGNORE INTO usuarios (nombre, email, password_hash, rol)
-VALUES ('Administrador', 'admin@mitortuga.com', 
-        CONCAT('$2y$10$','abcdefghijklmnopqrstuv','xxxxxx'), 'admin');
-
--- NOTA: Reemplace el password hash con uno real usando PHP password_hash.
+VALUES ('Administrador', 'admin@mitortuga.com',
+        '$2y$12$WpaK/4OCe4L5/dSUEZ247.F78vUfqB6VJl19ZBI9MxEU0ZBGUM5US', 'admin');

@@ -6,7 +6,7 @@
     <h1 class="display-5 fw-bold text-success">Bienvenido a Mi Tortuga</h1>
     <p class="col-md-8 fs-5">Delicias artesanales con entrega a domicilio. ¡Explora nuestro catálogo!</p>
     <a class="btn btn-success btn-lg" href="/mi_tortuga/index.php?page=productos">
-      Ver productos <i class="fa fa-arrow-right ms-2"></i>
+      Ver productos <i class="fa-solid fa-arrow-right ms-2"></i>
     </a>
   </div>
 </div>
