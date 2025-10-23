@@ -13,6 +13,7 @@ if ($action==='create') {
   $stmt = $mysqli->prepare("INSERT INTO productos(nombre,precio,stock,imagen,descripcion) VALUES (?,?,?,?,?)");
   $stmt->bind_param('sdiis',$nombre,$precio,$stock,$imagen,$descripcion);
   $stmt->execute();
+  $_SESSION['admin_flash'] = 'Producto creado correctamente.';
   header('Location: /mi_tortuga/index.php?page=admin'); exit;
 }
 elseif ($action==='update') {
@@ -23,10 +24,12 @@ elseif ($action==='update') {
   $stmt = $mysqli->prepare("UPDATE productos SET nombre=?, precio=?, stock=? WHERE id=?");
   $stmt->bind_param('sdii',$nombre,$precio,$stock,$id);
   $stmt->execute();
+  $_SESSION['admin_flash'] = 'Producto actualizado.';
   header('Location: /mi_tortuga/index.php?page=admin'); exit;
 }
 elseif ($action==='delete') {
   $id = (int)($_POST['id'] ?? 0);
   $mysqli->query("DELETE FROM productos WHERE id=$id");
+  $_SESSION['admin_flash'] = 'Producto eliminado.';
   header('Location: /mi_tortuga/index.php?page=admin'); exit;
 }

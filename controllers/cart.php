@@ -8,14 +8,24 @@ function get_or_create_cart($mysqli) {
   $uid = $_SESSION['usuario_id'] ?? null;
   if ($uid) {
     $stmt=$mysqli->prepare("SELECT id FROM carritos WHERE usuario_id=?");
-    $stmt->bind_param('i',$uid); $stmt->execute(); $res=$stmt->get_result()->fetch_assoc();
+    $stmt->bind_param('i',$uid);
+    $stmt->execute();
+    $res=$stmt->get_result()->fetch_assoc();
     if ($res) return (int)$res['id'];
-    $stmt=$mysqli->prepare("INSERT INTO carritos(usuario_id) VALUES (?)"); $stmt->bind_param('i',$uid); $stmt->execute(); return $stmt->insert_id;
+    $stmt=$mysqli->prepare("INSERT INTO carritos(usuario_id) VALUES (?)");
+    $stmt->bind_param('i',$uid);
+    $stmt->execute();
+    return $stmt->insert_id;
   } else {
     $stmt=$mysqli->prepare("SELECT id FROM carritos WHERE session_id=?");
-    $stmt->bind_param('s',$sid); $stmt->execute(); $res=$stmt->get_result()->fetch_assoc();
+    $stmt->bind_param('s',$sid);
+    $stmt->execute();
+    $res=$stmt->get_result()->fetch_assoc();
     if ($res) return (int)$res['id'];
-    $stmt=$mysqli->prepare("INSERT INTO carritos(session_id) VALUES (?)"); $stmt->bind_param('s',$sid); $stmt->execute(); return $stmt->insert_id;
+    $stmt=$mysqli->prepare("INSERT INTO carritos(session_id) VALUES (?)");
+    $stmt->bind_param('s',$sid);
+    $stmt->execute();
+    return $stmt->insert_id;
   }
 }
 
@@ -43,7 +53,7 @@ elseif ($action==='list') {
   $arr=[]; $subtotal=0;
   while ($i=$items->fetch_assoc()) { $line=$i['cantidad']*$i['precio']; $subtotal+=$line; $arr[]=$i+['subtotal'=>$line]; }
   $iva = round($subtotal*0.12, 2);
-  $envio = ($subtotal>300)?0:25;
+  $envio = ($subtotal >= 300 || $subtotal == 0) ? 0 : 25;
   $total = $subtotal + $iva + $envio;
   echo json_encode(['ok'=>true,'items'=>$arr,'subtotal'=>$subtotal,'iva'=>$iva,'envio'=>$envio,'total'=>$total]); exit;
 }
